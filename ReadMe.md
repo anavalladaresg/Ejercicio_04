@@ -34,13 +34,13 @@ Creamos un contenedor y lo dejamos en ejecución para trabajar dentro de él.
 docker run -d --name ubuntu1 ubuntu:22.04 tail -f /dev/null
 docker ps
 ```
-![Docker ps](img/Captura de pantalla 2024-10-25 231733.png)
+![Docker ps](img/cap1.png)
 
 **Ingresar al contenedor:**
 ```bash
 docker exec -it ubuntu1 bash
 ```
-![Docker ps](img/Captura de pantalla 2024-10-25 232220.png)
+![Docker exec](img/cap2.png)
 
 #### 🔧 Paso 3:  Instalar LAMP (Linux, Apache, MySQL, PHP)
 
