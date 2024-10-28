@@ -31,7 +31,7 @@ Creamos un contenedor y lo dejamos en ejecución para trabajar dentro de él.
 
 **Comandos utilizados:**
 ```bash
-docker run -d --name ubuntu1 ubuntu:22.04 tail -f /dev/null
+docker run -d -p 8000:80 --name ubuntu1 ubuntu:22.04 tail -f /dev/null
 docker ps
 ```
 ![Docker ps](img/cap1.png)
