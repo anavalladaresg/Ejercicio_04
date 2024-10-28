@@ -56,7 +56,7 @@ apt install -y php php-mysql libapache2-mod-php
 
 ***⚙️ Configuración de MariaDB:***
 
-Para configurar MariaDB, accedemos a su consola y configuramos las opciones iniciales, además de establecer la zona horaria.
+Para configurar MariaDB, accedemos a su consola y configuramos las opciones iniciales: primero se nos pedirá la contraseña de root, la dejamos en blanco y presionamos enter, en el siguiente paso ponemos "n", luego le decimos que si a cambiar la contraseña del root y la cambiamos, y por ultimo le damos que si al resto de preguntas, además de establecer la zona horaria.
 
 **Comandos utilizados:**
 ```bash
