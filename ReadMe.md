@@ -85,7 +85,8 @@ Creamos un directorio para WordPress y descargamos el paquete desde su sitio ofi
 **Comandos utilizados:**
 ```bash
 mkdir /var/www/html/wordpress
-wget https://wordpress.org/latest.tar.gz
+chown www-data: /srv/www
+curl https://wordpress.org/latest.tar.gz | tar zx -C /srv/www
 ```
 
 > **Nota:** En caso de error al descargar WordPress con wget, instálalo con el siguiente comando:
