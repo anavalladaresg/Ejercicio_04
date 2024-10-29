@@ -13,6 +13,10 @@
 
 ---
 
+### Prerrequisitos
+
+Para realizar este ejercicio, es necesario tener instalado Docker en la máquina local. En caso de no tenerlo, se puede instalar siguiendo los pasos del siguiente enlace: [Instalación de Docker](https://docs.docker.com/engine/install/).
+
 ### 1. Instalación de LAMP en el Contenedor Ubuntu
 
 Para comenzar, utilizamos la imagen de **Ubuntu 22.04** y seguimos los pasos para instalar el stack **LAMP** (Linux, Apache, MySQL y PHP) dentro del contenedor.
@@ -55,6 +59,8 @@ service apache2 start
 mysql_secure_installation
 apt install -y php php-mysql libapache2-mod-php
 ```
+![Instalación LAMP](img/cap3.png)
+![Instalación LAMP](img/cap4.png)
 
 Probamos que todo esté funcionando correctamente y reiniciamos el servicio de Apache.
 
@@ -63,12 +69,14 @@ Probamos que todo esté funcionando correctamente y reiniciamos el servicio de A
 echo "<?php phpinfo(); ?>" | tee /var/www/html/info.php
 service apache2 restart
 ```
+![Reiniciar Apache](img/cap5.png)
 
 Por último, accedemos al navegador para verificar:
 
 ```bash
 http://10.0.9.106:8000/info.php
 ```
+![PHP](img/cap6.png)
 
 --- 
 
@@ -87,7 +95,9 @@ apt install -y apache2 ghostscript libapache2-mod-php mysql-server php php-bcmat
 
 #### 📂  Paso 2: Crear Directorio y Descargar WordPress
 
-Creamos un directorio para WordPress y descargamos el paquete desde su sitio oficial.
+Creamos un directorio para WordPress y descargamos el paquete desde su sitio oficial (con `curl` o `wget`). 
+
+> Nota: A la hora de hacer el `curl`, puede que se necesite instalar el paquete >`curl` con el comando `apt install curl`.
 
 **Comandos utilizados:**
 ```bash
@@ -95,6 +105,7 @@ mkdir -p /srv/www
 chown www-data: /srv/www
 curl https://wordpress.org/latest.tar.gz | tar zx -C /srv/www
 ```
+![Descarga WordPress](img/cap7.png)
 
 > **Nota:** En caso de error al descargar WordPress con wget, instálalo con el siguiente comando:
 > ```bash
@@ -140,6 +151,8 @@ a2enmod rewrite
 a2dissite 000-default
 service apache2 restart
 ```
+![Configuración Apache](img/cap8.png)
+![Configuración Apache](img/cap9.png)
 
 Procedemos a crear la base de datos.
 
@@ -147,11 +160,12 @@ Procedemos a crear la base de datos.
 ```bash
 mysql -u root
 CREATE DATABASE wordpress;
-CREATE USER 'pedro' IDENTIFIED BY '<your-password>';
-GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, ALTER ON wordpress.* TO 'pedro';
+CREATE USER 'ana' IDENTIFIED BY 'ana';
+GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, ALTER ON wordpress.* TO 'ana';
 FLUSH PRIVILEGES;
 QUIT;
 ```
+![Base de Datos](img/cap10.png)
 
 #### 🗄️ Paso 4: Configurar la Base de Datos de WordPress
 
@@ -180,5 +194,6 @@ Para confirmar que WordPress está correctamente instalado, abrimos un navegador
 
 **Comandos utilizados:**
 ```bash
-firefox http://192.168.0.25:8000/wp-admin/setup-config.php
+firefox http://10.0.9.106:8000/wp-admin/setup-config.php
 ```
+![Finalización de Instalación](img/cap11.png)
