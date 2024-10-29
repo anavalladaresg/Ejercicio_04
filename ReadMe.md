@@ -27,42 +27,49 @@ apt update
 
 #### 🚀 Paso 2:  Crear y Ejecutar el Contenedor de Ubuntu 22.04
 
-Creamos un contenedor y lo dejamos en ejecución para trabajar dentro de él.
+Creamos un contenedor con la imagen y lo arrancamos.
 
 **Comandos utilizados:**
 ```bash
-docker run -d -p 8000:80 --name ubuntu1 ubuntu:22.04 tail -f /dev/null
+docker container create -i -t -p 8000:80 --name ubuntuLAMP ubuntu:22.04
 docker ps
 ```
 ![Docker ps](img/cap1.png)
 
 **Ingresar al contenedor:**
 ```bash
-docker exec -it ubuntu1 bash
+docker start --attach -i ubuntuLAMP
 ```
 ![Docker exec](img/cap2.png)
 
 #### 🔧 Paso 3:  Instalar LAMP (Linux, Apache, MySQL, PHP)
 
-Procedemos a instalar LAMP *(Linux, Apache, MySQL y PHP)* en el contenedor de Ubuntu 22.04.
+Estando dentro del contenedor, actualizamos los paquetes y procedemos a instalar LAMP.
 
 **Comandos utilizados:**
 ```bash
+apt update
 apt install -y apache2 apache2-utils
 apt install -y mariadb-server mariadb-client
 service apache2 start
+mysql_secure_installation
 apt install -y php php-mysql libapache2-mod-php
 ```
 
-***⚙️ Configuración de MariaDB:***
-
-Para configurar MariaDB, accedemos a su consola y configuramos las opciones iniciales: primero se nos pedirá la contraseña de root, la dejamos en blanco y presionamos enter, en el siguiente paso ponemos "n", luego le decimos que si a cambiar la contraseña del root y la cambiamos, y por ultimo le damos que si al resto de preguntas, además de establecer la zona horaria.
+Probamos que todo esté funcionando correctamente y reiniciamos el servicio de Apache.
 
 **Comandos utilizados:**
 ```bash
-service mariadb start
-mysql_secure_installation
+echo "<?php phpinfo(); ?>" | tee /var/www/html/info.php
+service apache2 restart
 ```
+
+Por último, accedemos al navegador para verificar:
+
+```bash
+http://10.0.9.106:8000/info.php
+```
+
 --- 
 
 ### 2.  Instalación de wordpress en el contenedor.
@@ -75,7 +82,7 @@ Instalamos las librerías necesarias para que WordPress funcione correctamente.
 
 **Comandos utilizados:**
 ```bash
-apt install ghostscript \ php-bcmath \ php-curl \ php-imagick \ php-intl \ php-json \ php-mbstring \ php-mysql \ php-xml \ php-zip
+apt install -y apache2 ghostscript libapache2-mod-php mysql-server php php-bcmath php-curl php-imagick php-intl php-json php-mbstring php-mysql php-xml php-zip 
 ```
 
 #### 📂  Paso 2: Crear Directorio y Descargar WordPress
@@ -84,7 +91,7 @@ Creamos un directorio para WordPress y descargamos el paquete desde su sitio ofi
 
 **Comandos utilizados:**
 ```bash
-mkdir /var/www/html/wordpress
+mkdir -p /srv/www
 chown www-data: /srv/www
 curl https://wordpress.org/latest.tar.gz | tar zx -C /srv/www
 ```
@@ -129,30 +136,24 @@ Inicializamos el sitio de WordPress y habilitamos el sitio.
 ```bash
 a2ensite wordpress
 service apache2 reload
+a2enmod rewrite
+a2dissite 000-default
+service apache2 restart
 ```
 
-Habilitamos la URL y deshabilitamos la URL por defecto, después recargamos Apache para que surtan efecto todso los cambios realizados.
+Procedemos a crear la base de datos.
 
 **Comandos utilizados:**
 ```bash
-a2enmod rewrite
-a2dissite 000-default
-service apache2 reload
+mysql -u root
+CREATE DATABASE wordpress;
+CREATE USER 'pedro' IDENTIFIED BY '<your-password>';
+GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, ALTER ON wordpress.* TO 'pedro';
+FLUSH PRIVILEGES;
+QUIT;
 ```
 
 #### 🗄️ Paso 4: Configurar la Base de Datos de WordPress
-
-Ingresamos a la consola de MariaDB y creamos una base de datos para WordPress.
-
-**Comandos utilizados:**
-```bash
-mysql -u root -p
-CREATE DATABASE wordpress;
-CREATE USER '<your-user>' IDENTIFIED BY '<your-password>';
-GRANT ALL PRIVILEGES ON wordpress.* TO '<your-user>';
-FLUSH PRIVILEGES;
-EXIT;
-```
 
 Para configurar WordPress para poder acceder a la base de datos, copiamos el archivo de configuración y lo editamos.
 
@@ -172,9 +173,6 @@ define('DB_HOST', 'localhost');
 define('DB_CHARSET', 'utf8');
 define('DB_COLLATE', '');
 ```
-
-También los datos obtenidos en la guía de instalación de WordPress, que son claves generadas aleatoriamente.
-
 
 #### 🌐 Paso 5: Comprobar que WordPress funciona correctamente
 
